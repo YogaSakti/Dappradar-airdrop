@@ -31,7 +31,7 @@ jobs:
       run: |
         npm start
     - name: Update Last Check
-        run: TZ='Asia/Jakarta' date +%c >> lastCheck
+      run: TZ='Asia/Jakarta' date +%c >> lastCheck
     - name: Push LogFile
       run: |
         git config --global user.name 'Yoga Sakti'
