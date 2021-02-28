@@ -1,0 +1,40 @@
+# This workflow will do a clean install of node dependencies, build the source code and run tests across different versions of node
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
+name: Check Airdrop
+
+on: 
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: "*/15 * * * *"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    if: github.event.repository.owner.id == github.event.sender.id
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Set up Nodejs
+      run: |
+        sudo apt-get install nodejs -y
+        npm install
+    - name: Create .env file
+      run: |
+        touch .env
+        echo botToken=${{ secrets.BOTTOKEN }} >> .env
+        echo channelId=${{ secrets.CHANNELID }} >> .env
+        echo dappradarAuthorization=${{ secrets.DAPPRADARAUTHORIZATION }} >> .env
+        echo airdropLogFile=${{ secrets.AIRDROPLOGFILE }} >> .env
+    - name: Run Script
+      run: |
+        npm start
+    - name: Push LogFile
+      run: |
+        git config --global user.name 'Yoga Sakti'
+        git config --global user.email 'YogaSakti@users.noreply.github.com'
+        git add lastAirdrop.json
+        git commit -am "Update Last Airdrop Id"
+        git push
+    

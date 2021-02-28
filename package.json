@@ -1,0 +1,17 @@
+{
+  "name": "dappradar-telegram",
+  "version": "1.0.0",
+  "description": "Airdrop Notif from Dappradar",
+  "main": "index.js",
+  "author": "yogs",
+  "license": "MIT",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "form-data": "^4.0.0",
+    "moment-timezone": "^0.5.33",
+    "node-fetch": "^2.6.1"
+  }
+}
