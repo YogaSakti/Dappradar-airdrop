@@ -30,11 +30,13 @@ jobs:
     - name: Run Script
       run: |
         npm start
+    - name: Update Last Check
+        run: TZ='Asia/Jakarta' date +%c >> lastCheck
     - name: Push LogFile
       run: |
         git config --global user.name 'Yoga Sakti'
         git config --global user.email 'YogaSakti@users.noreply.github.com'
-        git add lastAirdrop.json
-        git commit -am "Update Last Airdrop Id"
+        git add .
+        git commit -am "Airdrop Check"
         git push
     
