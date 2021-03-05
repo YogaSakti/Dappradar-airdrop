@@ -98,8 +98,8 @@ async function updateParticipants(msgId, totalParticipant) {
             let airdropData = airdropList[0]
             let airdropBanner = airdropList[0].featuredImgUrl
             let airdropText = `📢 <b>${airdropData.title}, ${airdropData.shortDescription}</b>\n🎉 Reward: <b>${airdropData.tokenAmount / airdropData.winnersCount} ${airdropData.tokenName}</b> <i>Per Winner</i>\n⭐️ Total Winner: ${airdropData.winnersCount}\n\n${airdropData.aboutTitle}\n${airdropData.aboutText}\n\nStart Date: ${moment(airdropData.startDate).format('LLL')}\nEnd Date: ${moment(airdropData.endDate).format('LLL')}\nListing Date: ${moment(airdropData.winnersListingDate).format('LLL')}`
-            updateAirdropLog(airdropData.id, totalParticipants, sendMsg.result.message_id)
             const sendMsg = await sendNews(airdropBanner, airdropText, totalParticipants)
+            updateAirdropLog(airdropData.id, totalParticipants, sendMsg.result.message_id)
             if (sendMsg.ok) return console.log('[SUCCESS] Send Notification to ' + config.channelId)
         } else {
             console.log(`Nothing new...`)
