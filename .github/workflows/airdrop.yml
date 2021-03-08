@@ -29,7 +29,8 @@ jobs:
         echo airdropLogFile=${{ secrets.AIRDROPLOGFILE }} >> .env
     - name: Run Script
       run: |
-        npm start
+        npm run start
+        npm run join
     - name: Update Last Check
       run: TZ='Asia/Jakarta' date +%c > lastCheck
     - name: Push LogFile

@@ -6,7 +6,8 @@
   "author": "yogs",
   "license": "MIT",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "join": "node join.js"
   },
   "dependencies": {
     "dotenv": "^8.2.0",

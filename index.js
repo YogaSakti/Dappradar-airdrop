@@ -90,24 +90,29 @@ async function updateParticipants(msgId, totalParticipant) {
 
 (async () => {
     try {
+        console.log("[+] Get Airdrop list...")
         const getAirdropList = await getAirdrop()
         const airdropList = getAirdropList["hydra:member"]
+        console.log("[+] Get Airdrop Participants...")
         const totalParticipants = await getAirdropParticipants(airdropList[0].id)
         
         if ((airdropLog.id < airdropList[0].id) && airdropList[0]?.enabled ) {
             console.log(`[NEW] ${airdropList[0].title} | ${airdropList[0].tokenAmount / airdropList[0].winnersCount} ${airdropList[0].tokenName} For ${airdropList[0].winnersCount} Winner`)
+            console.log("[+] Parse Airdrop data...")
             let airdropData = airdropList[0]
             let airdropBanner = airdropList[0].featuredImgUrl
             let airdropText = `📢 <b>${airdropData.title}, ${airdropData.shortDescription}</b>\n🎉 Reward: <b>${airdropData.tokenAmount / airdropData.winnersCount} ${airdropData.tokenName}</b> <i>Per Winner</i>\n⭐️ Total Winner: ${airdropData.winnersCount}\n\n${airdropData.aboutTitle}\n${airdropData.aboutText}\n\nStart Date: ${moment(airdropData.startDate).format('LLL')}\nEnd Date: ${moment(airdropData.endDate).format('LLL')}\nListing Date: ${moment(airdropData.winnersListingDate).format('LLL')}`
+            console.log("[+] Send updates to Telegram...")
             const sendMsg = await sendNews(airdropBanner, airdropText, totalParticipants)
             updateAirdropLog(airdropData.id, totalParticipants, sendMsg.result.message_id)
-            if (sendMsg.ok) return console.log('[SUCCESS] Send Notification to ' + config.channelId)
+            if (sendMsg.ok) return console.log('[+] Successfully sent updates to ' + config.channelId)
         } else {
-            console.log(`Nothing new...`)
+            console.log(`[x] Nothing new`)
             if (airdropLog.totalParticipant < totalParticipants) {
                 updateAirdropLog(airdropList[0].id, totalParticipants)
+                console.log("[+] Send Airdrop participant updates to telegram...")
                 const requestUpdateParticipants = await updateParticipants(airdropLog.msgId, totalParticipants)
-                if (requestUpdateParticipants) return console.log('[UPDATE] Participants Updated...')
+                if (requestUpdateParticipants) return console.log('[+] Participants Updated')
             }
         }
     } catch (error) {
