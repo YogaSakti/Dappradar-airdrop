@@ -75,5 +75,5 @@ async function joinAirdrop(id, wallet, email) {
     console.log("[+] Joining Airdrop "+airdropLog.id)
     const register = await joinAirdrop(airdropLog.id, wallet, email)
     if (!register.email && register.email !== email) return console.error("[x] Register Failed...")
-    console.log(`[+] Successfully joined airdrop ${airdropLog.id} using ${email}`)
+    console.log(`[+] Successfully joined airdrop ${airdropLog.id}`)
 })()
