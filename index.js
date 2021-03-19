@@ -101,7 +101,12 @@ async function updateParticipants(msgId, totalParticipant) {
             console.log("[+] Parse Airdrop data...")
             let airdropData = airdropList[0]
             let airdropBanner = airdropList[0].featuredImgUrl
-            let airdropText = `📢 <b>${airdropData.title}, ${airdropData.shortDescription}</b>\n🎉 Reward: <b>${airdropData.tokenAmount / airdropData.winnersCount} ${airdropData.tokenName}</b> <i>Per Winner</i>\n⭐️ Total Winner: ${airdropData.winnersCount}\n\n${airdropData.aboutTitle}\n${airdropData.aboutText}\n\nStart Date: ${moment(airdropData.startDate).format('LLL')}\nEnd Date: ${moment(airdropData.endDate).format('LLL')}\nListing Date: ${moment(airdropData.winnersListingDate).format('LLL')}`
+            let airdropDate = {
+                start: moment(airdropData.startDate).tz("Asia/Jakarta"),
+                end: moment(airdropData.endDate).tz("Asia/Jakarta"),
+                listing: moment(airdropData.winnersListingDate).tz("Asia/Jakarta")
+            }
+            let airdropText = `📢 <b>${airdropData.title}, ${airdropData.shortDescription}</b>\n🎉 Reward: <b>${airdropData.tokenAmount / airdropData.winnersCount} ${airdropData.tokenName}</b> <i>Per Winner</i>\n⭐️ Total Winner: ${airdropData.winnersCount}\n\n${airdropData.aboutTitle}\n${airdropData.aboutText}\n\nStart Date: ${airdropDate.start.format('LLL')}\nEnd Date: ${airdropDate.end.format('LLL')}\nListing Date: ${airdropDate.listing.format('LLL')}`
             console.log("[+] Send updates to Telegram...")
             const sendMsg = await sendNews(airdropBanner, airdropText, totalParticipants)
             updateAirdropLog(airdropData.id, totalParticipants, sendMsg.result.message_id)
