@@ -1,11 +1,11 @@
 # This workflow will do a clean install of node dependencies, build the source code and run tests across different versions of node
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
-name: Check Airdrop
+name: Auto Join
 
 on: 
-  push:
-    branches:
-      - main
+  # push:
+  #   branches:
+  #     - main
   schedule:
     - cron: "0 */1 * * *"
 
@@ -30,13 +30,13 @@ jobs:
     - name: Run Script
       run: |
         npm run join
-    - name: Update Last Check
+    - name: Update Auto Join
       run: TZ='Asia/Jakarta' date +%c > lastJoin
     - name: Push LogFile
       run: |
-        git config --global user.name 'Dappradar airdrop'
+        git config --global user.name 'Auto Join'
         git config --global user.email 'DappradarAirdrop@users.noreply.github.com'
         git add .
-        git commit -am "Airdrop Check"
+        git commit -am "Auto Join"
         git push
     
