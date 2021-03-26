@@ -7,7 +7,7 @@ on:
     branches:
       - main
   schedule:
-    - cron: "0 */2 * * *"
+    - cron: "0 */1 * * *"
 
 jobs:
   build:
@@ -29,9 +29,9 @@ jobs:
         echo airdropLogFile=${{ secrets.AIRDROPLOGFILE }} >> .env
     - name: Run Script
       run: |
-        npm run start
+        npm run join
     - name: Update Last Check
-      run: TZ='Asia/Jakarta' date +%c > lastCheck
+      run: TZ='Asia/Jakarta' date +%c > lastJoin
     - name: Push LogFile
       run: |
         git config --global user.name 'Dappradar airdrop'

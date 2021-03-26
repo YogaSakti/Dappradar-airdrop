@@ -4,7 +4,6 @@ const FormData = require('form-data');
 const config = require('./config');
 const fs = require('fs');
 moment.locale('id')
-moment.tz("Asia/Jakarta")
 
 const airdropLog = JSON.parse(fs.readFileSync(config.airdropLogFile, 'utf8'))
 
@@ -115,6 +114,7 @@ async function updateParticipants(msgId, totalParticipant) {
             console.log(`[x] Nothing new`)
             if (airdropLog.totalParticipant < totalParticipants) {
                 updateAirdropLog(airdropList[0].id, totalParticipants)
+                console.log(`[!] Airdrop ${airdropList[0].id} participants: ${totalParticipants}`)
                 console.log("[+] Send Airdrop participant updates to telegram...")
                 const requestUpdateParticipants = await updateParticipants(airdropLog.msgId, totalParticipants)
                 if (requestUpdateParticipants) return console.log('[+] Participants Updated')
