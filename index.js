@@ -3,7 +3,6 @@ const fetch = require('node-fetch')
 const FormData = require('form-data');
 const config = require('./config');
 const fs = require('fs');
-moment.locale('id')
 
 const airdropLog = JSON.parse(fs.readFileSync(config.airdropLogFile, 'utf8'))
 
