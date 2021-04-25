@@ -11,7 +11,7 @@ function updateAirdropLog(id, totalParticipant, msgId) {
     try {
         let content = JSON.parse(fs.readFileSync(config.airdropLogFile, 'utf8'));
         content.id = id;
-        content.totalParticipant = totalParticipant;
+        content.totalParticipant = totalParticipant || 0;
         if (msgId) content.msgId = msgId;
         fs.writeFileSync(config.airdropLogFile, JSON.stringify(content));
     } catch (error) {
