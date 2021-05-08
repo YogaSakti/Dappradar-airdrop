@@ -1,126 +1,82 @@
+const api = require('./utils/api');
+const db = require('./utils/db');
+const telegram = require('./utils/telegram');
+const caption = require('./utils/caption')
 const moment = require('moment-timezone')
-const fetch = require('node-fetch')
-const FormData = require('form-data');
-const config = require('./config');
-const fs = require('fs');
 
-const airdropLog = JSON.parse(fs.readFileSync(config.airdropLogFile, 'utf8'))
+const env = require('./config')
 
-function updateAirdropLog(id, totalParticipant, msgId) {
-    try {
-        let content = JSON.parse(fs.readFileSync(config.airdropLogFile, 'utf8'));
-        content.id = id;
-        content.totalParticipant = totalParticipant || 0;
-        if (msgId) content.msgId = msgId;
-        fs.writeFileSync(config.airdropLogFile, JSON.stringify(content));
-    } catch (error) {
-        throw new Error(err)
-    }
-}
+const isStarted = (startDate) => moment(startDate) < moment()
+const isEnded = (endDate) => moment(endDate) < moment()
+const isWinnerPicked = (winnersListingDate) => moment(winnersListingDate) < moment()
 
-async function getAirdrop() {
-    try {
-        const request = await fetch("https://backoffice.dappradar.com/airdrops?page=1&itemsPerPage=100", {
-            headers: {
-                accept: "application/json, */*",
-                authorization: `${config.dappradarAuthorization || null}`,
-                "cache-control": "no-cache"
-            },
-            mode: "cors",
-            referrer: "https://dappradar.com/"
-        })
-        const response = await request.json()
-        if (response) return response
-    } catch (error) {
-        throw new Error(error)
-    }
-}
-
-async function getAirdropParticipants(id) {
-    try {
-        const request = await fetch(`https://backoffice.dappradar.com/airdrops/${id}/participants`, {
-            headers: {
-                accept: "application/json, */*",
-                authorization: `${config.dappradarAuthorization}`,
-                "cache-control": "no-cache"
-            },
-            mode: "cors",
-            referrer: "https://dappradar.com/"
-        })
-        const response = await request.json()
-        if (response && response["hydra:totalItems"]) return response["hydra:totalItems"]
-    } catch (error) {
-        throw new Error(error)
-    }
-}
-
-async function sendNews(bannerUrl, caption, totalParticipant) {
-    try {
-        const formData = new FormData()
-        formData.append("photo", bannerUrl);
-        formData.append("caption", caption);
-        formData.append("reply_markup", `{\"inline_keyboard\": [[{\"text\": \"Join Now!\",\"url\": \"https://dappradar.com/hub/airdrops\"}],[{\"text\": \"Total Participant: ${totalParticipant}\",\"url\":\"https://dappradar.com/hub/airdrops\"}]]}`);
-        const request = await fetch(`https://api.telegram.org/bot${config.botToken}/sendPhoto?chat_id=${config.channelId}&parse_mode=html&disable_web_page_preview=true`, {
-            method: 'POST',
-            body: formData,
-        })
-        const response = await request.json()
-        if (response) return response
-    } catch (error) {
-        throw new Error(error)
-    }
-}
-
-async function updateParticipants(msgId, totalParticipant) {
-    try {
-        const formData = new FormData()
-        formData.append("reply_markup", `{\"inline_keyboard\": [[{\"text\": \"Join Now!\",\"url\": \"https://dappradar.com/hub/airdrops\"}],[{\"text\": \"Total Participant: ${totalParticipant}\",\"url\":\"https://dappradar.com/hub/airdrops\"}]]}`);
-        const request = await fetch(`https://api.telegram.org/bot${config.botToken}/editMessageReplyMarkup?chat_id=${config.channelId}&message_id=${msgId}`, {
-            method: 'POST',
-            body: formData,
-        })
-        const response = await request.json()
-        if (response) return response
-    } catch (error) {
-        throw new Error(error)
-    }
-}
-
+;
 (async () => {
-    try {
-        console.log("[+] Get Airdrop list...")
-        const getAirdropList = await getAirdrop()
-        const airdropList = getAirdropList["hydra:member"]
-        console.log("[+] Get Airdrop Participants...")
-        const totalParticipants = await getAirdropParticipants(airdropList[0].id)
-        
-        if ((airdropLog.id < airdropList[0].id) && airdropList[0]?.enabled ) {
-            console.log(`[NEW] ${airdropList[0].title} | ${airdropList[0].tokenAmount / airdropList[0].winnersCount} ${airdropList[0].tokenName} For ${airdropList[0].winnersCount} Winner`)
-            console.log("[+] Parse Airdrop data...")
-            let airdropData = airdropList[0]
-            let airdropBanner = airdropList[0].featuredImgUrl
-            let airdropDate = {
-                start: moment(airdropData.startDate).tz("Asia/Jakarta"),
-                end: moment(airdropData.endDate).tz("Asia/Jakarta"),
-                listing: moment(airdropData.winnersListingDate).tz("Asia/Jakarta")
+    const airdropList = await api.getAirdrop(env.auth)
+    airdropList.sort((a, b) => b.winnersListingDate - a.winnersListingDate)
+    for (let i = 0; i < airdropList.length; i++) {
+        const drop = airdropList[i];
+        delete drop.participants
+        const exist = await db.isExist({id: drop.id})
+        if (exist) {
+            const data = await db.find({id: drop.id })
+            drop.started = isStarted(data.startDate)
+            drop.ended = isEnded(data.endDate)
+            drop.winnerPicked = isWinnerPicked(data.winnersListingDate)
+            await db.update(drop)
+
+            let genCaption = caption(drop)
+            const inlineData = {
+                id: drop.id,
+                status: isStarted(data.startDate) ? isEnded(data.endDate) ? isWinnerPicked(data.winnersListingDate) ? 'Event has ended, check winners list' : 'Event has ended, picking winner...' : 'Join now!' : 'Be patient, event not yet started!',
+                totalParticipants: await api.getAirdropParticipants(env.auth, drop.id)
             }
-            let airdropText = `📢 <b>${airdropData.title}, ${airdropData.shortDescription}</b>\n🎉 Reward: <b>${airdropData.tokenAmount / airdropData.winnersCount} ${airdropData.tokenName}</b> <i>Per Winner</i>\n⭐️ Total Winner: ${airdropData.winnersCount}\n\n${airdropData.aboutTitle}\n${airdropData.aboutText}\n\nStart Date: ${airdropDate.start.format('LLL')}\nEnd Date: ${airdropDate.end.format('LLL')}\nListing Date: ${airdropDate.listing.format('LLL')}`
-            console.log("[+] Send updates to Telegram...")
-            const sendMsg = await sendNews(airdropBanner, airdropText, totalParticipants)
-            updateAirdropLog(airdropData.id, totalParticipants, sendMsg.result.message_id)
-            if (sendMsg.ok) return console.log('[+] Successfully sent updates to ' + config.channelId)
+            // post new airdrop 24 hour befor launch
+            const aDayBeforeEvent = moment(data.startDate).format('D') - 1 == moment().format('D');
+            if (!data.posted && !isStarted(data.startDate) && aDayBeforeEvent && !isEnded(data.endDate)) {
+                console.log(`[POST] ${drop.id}. ${drop.title} | ${drop.tokenAmount / drop.winnersCount} ${drop.tokenName} For ${drop.winnersCount} Winner`)
+                const sendnews = await telegram.sendPost(data.featuredImgUrl, genCaption, inlineData)
+                if (!sendnews) return Error(sendnews);
+                drop.posted = true
+                drop.msgId = sendnews.result.message_id
+                await db.update(drop)
+            } else if (data.posted && isStarted(data.startDate) && !isEnded(data.endDate)) {
+                const updateNews = await telegram.updatePost(drop.msgId, inlineData)
+                if (updateNews) return console.log(`[UPDATE] ${drop.id}. ${drop.title} | ${drop.tokenAmount / drop.winnersCount} ${drop.tokenName} For ${drop.winnersCount} Winner`)
+            } else if ((moment(data.endDate).format('D') + 2 == moment().format('D')) && isEnded(data.endDate)) {
+                const updateLast = await telegram.updatePost(drop.msgId, inlineData)
+                if (updateLast) return console.log(`[Last] ${drop.id}. ${drop.title} | ${drop.tokenAmount / drop.winnersCount} ${drop.tokenName} For ${drop.winnersCount} Winner`)
+            }
         } else {
-            console.log(`[x] Nothing new`)
-            if (airdropLog.totalParticipant < totalParticipants) {
-                updateAirdropLog(airdropList[0].id, totalParticipants)
-                console.log(`[!] Airdrop ${airdropList[0].id} participants: ${totalParticipants}`)
-                console.log("[+] Send Airdrop participant updates to telegram...")
-                const requestUpdateParticipants = await updateParticipants(airdropLog.msgId, totalParticipants)
-                if (requestUpdateParticipants) return console.log('[+] Participants Updated')
+            drop.started = isStarted(drop.startDate)
+            drop.ended = isEnded(drop.endDate)
+            drop.winnerPicked = isWinnerPicked(drop.winnersListingDate)
+            drop.posted = false
+            await db.add(drop)
+            
+            if (isEnded(drop.endDate)) {
+                console.log(`[OLD] ${drop.id}. ${drop.title} | ${drop.tokenAmount / drop.winnersCount} ${drop.tokenName} For ${drop.winnersCount} Winner`);
+            }else {
+                console.log(`[NEW] ${drop.id}. ${drop.title} | ${drop.tokenAmount / drop.winnersCount} ${drop.tokenName} For ${drop.winnersCount} Winner`)
+            }
+            
+            if (isStarted(drop.startDate) && !isEnded(drop.endDate)) {
+                let genCaption = caption(drop)
+                const inlineData = {
+                    id: drop.id,
+                    status: isStarted(drop.startDate) ? isEnded(drop.endDate) ? isWinnerPicked(drop.winnersListingDate) ? 'Event has ended, check winners list' : 'Event has ended, picking winner...' : 'Join now!' : 'Be patient, event not yet started!',
+                    totalParticipants: await api.getAirdropParticipants(env.auth, drop.id)
+                }
+                const sendnews = await telegram.sendPost(drop.featuredImgUrl, genCaption, inlineData)
+                if (!sendnews) return Error(sendnews);
+                drop.posted = true
+                drop.msgId = sendnews.result.message_id
+                await db.update(drop)
+                console.log(`[POST] ${drop.id}. ${drop.title} | ${drop.tokenAmount / drop.winnersCount} ${drop.tokenName} For ${drop.winnersCount} Winner`)
+            } else if (drop.posted && !isEnded(drop.endDate)) {
+
             }
         }
-    } catch (error) {
-        console.error(error)
-    }
 
-})();
+    }
+})()

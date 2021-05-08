@@ -3,11 +3,11 @@
 name: Auto Join
 
 on: 
-  # push:
-  #   branches:
-  #     - main
-  schedule:
-    - cron: "0 */1 * * *"
+  push:
+    branches:
+      - nothing
+  # schedule:
+    # - cron: "0 */1 * * *"
 
 jobs:
   build:
