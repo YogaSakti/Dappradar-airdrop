@@ -19,14 +19,6 @@ jobs:
     - name: Get current day
       id: day
       run: echo "::set-output name=day::$(date +'%A')"
-    - name: Create .env file
-      run: |
-        touch .env
-        echo BOT_TOKEN=${{ secrets.BOTTOKEN }} >> .env
-        echo CHANNEL_ID=${{ secrets.CHANNELID }} >> .env
-        echo LOGIN_KEY=${{ secrets.MAINPRIVATEKEY }} >> .env
-        echo DATABASE_USER=${{ secrets.DATABASEUSER }} >> .env
-        echo DATABASE_PASSWORD=${{ secrets.DATABASEPASS }} >> .env
 
   main: 
     needs: build
@@ -34,6 +26,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: echo "it's ${{ needs.build.outputs.today }}, let's fcking go...."
+
+      - name: Create .env file
+        run: |
+          touch .env
+          echo BOT_TOKEN=${{ secrets.BOTTOKEN }} >> .env
+          echo CHANNEL_ID=${{ secrets.CHANNELID }} >> .env
+          echo LOGIN_KEY=${{ secrets.MAINPRIVATEKEY }} >> .env
+          echo DATABASE_USER=${{ secrets.DATABASEUSER }} >> .env
+          echo DATABASE_PASSWORD=${{ secrets.DATABASEPASS }} >> .env
+
       - uses: actions/checkout@v2
       - uses: c-hive/gha-npm-cache@v1
       - name: Setup Node.js 
@@ -65,6 +67,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: echo "it's ${{ needs.build.outputs.today }}, nevermind...."
+
+      - name: Create .env file
+        run: |
+          touch .env
+          echo BOT_TOKEN=${{ secrets.BOTTOKEN }} >> .env
+          echo CHANNEL_ID=${{ secrets.CHANNELID }} >> .env
+          echo LOGIN_KEY=${{ secrets.MAINPRIVATEKEY }} >> .env
+          echo DATABASE_USER=${{ secrets.DATABASEUSER }} >> .env
+          echo DATABASE_PASSWORD=${{ secrets.DATABASEPASS }} >> .env
+          
       - uses: actions/checkout@v2
       - uses: c-hive/gha-npm-cache@v1
       - name: Setup Node.js 
