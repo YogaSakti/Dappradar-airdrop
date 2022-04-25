@@ -3,8 +3,8 @@ require('dotenv').config()
 const fetch = require('node-fetch')
 const FormData = require('form-data');
 
-const token = process.env.botToken;
-const channelID = process.env.channelId;
+const token = process.env.BOT_TOKEN;
+const channelID = process.env.CHANNEL_ID;
 
 const sendPost = (bannerUrl, caption, data) => new Promise((resolve, reject) => {
     const body = new FormData()

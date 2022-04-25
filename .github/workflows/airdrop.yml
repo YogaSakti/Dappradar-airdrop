@@ -22,10 +22,10 @@ jobs:
     - name: Create .env file
       run: |
         touch .env
-        echo botToken=${{ secrets.BOTTOKEN }} >> .env
-        echo channelId=${{ secrets.CHANNELID }} >> .env
-        echo mainPrivateKey=${{ secrets.MAINPRIVATEKEY }} >> .env
-        echo mongodbServer=${{ secrets.MONGODBSERVER }} >> .env
+        echo BOT_TOKEN=${{ secrets.BOTTOKEN }} >> .env
+        echo CHANNEL_ID=${{ secrets.CHANNELID }} >> .env
+        echo LOGIN_KEY=${{ secrets.MAINPRIVATEKEY }} >> .env
+        echo DATABASE_URL=${{ secrets.MONGODBSERVER }} >> .env
 
   main: 
     needs: build

@@ -4,7 +4,7 @@ const auth = require('./module/auth');
 const db = require('./module/database');
 const { isStarted, isEnded, isWinnerPicked } = require('./utils/string').airdrop
 const delay = require('delay');
-const loginKey = process.env.mainPrivateKey;
+const loginKey = process.env.LOGIN_KEY;
 
 (async () => {
     console.log('[>] Login...')

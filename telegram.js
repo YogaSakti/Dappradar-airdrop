@@ -5,7 +5,7 @@ const db = require('./module/database');
 const telegram = require('./module/telegram');
 const caption = require('./utils/string')
 const delay = require('delay');
-const loginKey = process.env.mainPrivateKey;
+const loginKey = process.env.LOGIN_KEY;
 
 (async () => {
     console.log('[>] Login...')
