@@ -1,0 +1,93 @@
+# This workflow will do a clean install of node dependencies, build the source code and run tests across different versions of node
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
+name: Airdrop Updater
+
+on: 
+  push:
+    branches:
+      - master
+  schedule:
+    - cron: "30 3-9 * * *"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    if: github.event.repository.owner.id == github.event.sender.id
+    outputs:
+      today: ${{ steps.day.outputs.day }}
+    steps:
+    - name: Get current day
+      id: day
+      run: echo "::set-output name=day::$(date +'%A')"
+    - name: Create .env file
+      run: |
+        touch .env
+        echo botToken=${{ secrets.BOTTOKEN }} >> .env
+        echo channelId=${{ secrets.CHANNELID }} >> .env
+        echo mainPrivateKey=${{ secrets.MAINPRIVATEKEY }} >> .env
+
+  main: 
+    needs: build
+    if: ${{ needs.build.outputs.today == 'Monday' }}
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "it's ${{ needs.build.outputs.today }}, let's fcking go...."
+      - uses: actions/checkout@v2
+      - uses: c-hive/gha-npm-cache@v1
+      - name: Setup Node.js 
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16
+      - name: Install NPM Package
+        run: npm install
+
+      - name: Update Airdrop Status
+        run: node status.js
+      - name: Update Telegram
+        run: node telegram.js
+
+      - name: Update Last Check
+        run: TZ='Asia/Jakarta' date +%c > lastCheck
+        
+      - name: Push LogFile
+        run: |
+          git config --global user.name 'Airdrop Updater'
+          git config --global user.email 'updater@users.noreply.github.com'
+          git add .
+          git commit -am "Airdrop Check"
+          git push
+      
+  secondary: 
+    needs: build
+    if: ${{ needs.build.outputs.today !== 'Monday' }}
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "it's ${{ needs.build.outputs.today }}, nevermind...."
+      - uses: actions/checkout@v2
+      - uses: c-hive/gha-npm-cache@v1
+      - name: Setup Node.js 
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16
+
+      - name: Install NPM Package
+        run: npm install
+
+      - name: Update Airdrop
+        run: node airdrop.js
+      - name: Update Airdrop Status
+        run: node status.js
+      - name: Update Telegram
+        run: node telegram.js
+
+      - name: Update Last Check
+        run: TZ='Asia/Jakarta' date +%c > lastCheck
+
+      - name: Push LogFile
+        run: |
+          git config --global user.name 'Airdrop Updater'
+          git config --global user.email 'updater@users.noreply.github.com'
+          git add .
+          git commit -am "Airdrop Check"
+          git push
+    
