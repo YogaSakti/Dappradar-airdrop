@@ -25,7 +25,8 @@ jobs:
         echo BOT_TOKEN=${{ secrets.BOTTOKEN }} >> .env
         echo CHANNEL_ID=${{ secrets.CHANNELID }} >> .env
         echo LOGIN_KEY=${{ secrets.MAINPRIVATEKEY }} >> .env
-        echo DATABASE_URL=${{ secrets.MONGODBSERVER }} >> .env
+        echo DATABASE_USER=${{ secrets.DATABASEUSER }} >> .env
+        echo DATABASE_PASSWORD=${{ secrets.DATABASEPASS }} >> .env
 
   main: 
     needs: build

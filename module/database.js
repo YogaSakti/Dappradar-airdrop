@@ -1,8 +1,9 @@
-require('dotenv').config({ path: '../.env' })
+require('dotenv').config()
 const mongoose = require('mongoose');
 const { Schema, model } = mongoose
-const databaseUrl = process.env.DATABASE_URL;
-mongoose.connect(`${databaseUrl}`, { useNewUrlParser: true, useUnifiedTopology: true }, (error) => {
+const dbUSER = process.env.DATABASE_USER;
+const dbPass = process.env.DATABASE_PASSWORD;
+mongoose.connect(`mongodb+srv://${dbUSER}:${dbPass}@main.mbtsa.mongodb.net/dappradar?retryWrites=true&w=majority`, { useNewUrlParser: true, useUnifiedTopology: true }, (error) => {
     if (error) return console.error(`Error! ${error}`)
     console.log('DB: Connected!');
 });

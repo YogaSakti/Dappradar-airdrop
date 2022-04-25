@@ -28,7 +28,8 @@ Input telegram bot token and telegram chatid, mongodb server url, as well as pri
 BOT_TOKEN=
 CHANNEL_ID=
 LOGIN_KEY=
-DATABASE_URL=
+DATABASE_USER=
+DATABASE_PASSWORD=
 ```
 
 run:
