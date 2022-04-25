@@ -25,6 +25,7 @@ jobs:
         echo botToken=${{ secrets.BOTTOKEN }} >> .env
         echo channelId=${{ secrets.CHANNELID }} >> .env
         echo mainPrivateKey=${{ secrets.MAINPRIVATEKEY }} >> .env
+        echo mongodbServer=${{ secrets.MONGODBSERVER }} >> .env
 
   main: 
     needs: build
@@ -59,7 +60,7 @@ jobs:
       
   secondary: 
     needs: build
-    if: ${{ needs.build.outputs.today !== 'Monday' }}
+    if: ${{ needs.build.outputs.today != 'Monday' }}
     runs-on: ubuntu-latest
     steps:
       - run: echo "it's ${{ needs.build.outputs.today }}, nevermind...."
