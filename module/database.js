@@ -1,9 +1,8 @@
-require('dotenv').config()
+require('dotenv').config({ path: '../.env' })
 const mongoose = require('mongoose');
 const { Schema, model } = mongoose
 const databaseUrl = process.env.DATABASE_URL;
-
-mongoose.connect(databaseUrl, { useNewUrlParser: true, useUnifiedTopology: true }, (error) => {
+mongoose.connect(`${databaseUrl}`, { useNewUrlParser: true, useUnifiedTopology: true }, (error) => {
     if (error) return console.error(`Error! ${error}`)
     console.log('DB: Connected!');
 });
