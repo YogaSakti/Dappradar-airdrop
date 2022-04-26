@@ -7,19 +7,19 @@
 
 const moment = require('moment-timezone');
 
-const caption = (airdropData) => {
-    let startDate = moment(airdropData.startDate).tz('Etc/UTC');
-    let endDate = moment(airdropData.endDate).tz('Etc/UTC');
-    let listingDate = moment(airdropData.winnersListingDate).tz('Etc/UTC');
+const caption = (data) => {
+    let startDate = moment(data.startDate).tz('Etc/UTC');
+    let endDate = moment(data.endDate).tz('Etc/UTC');
+    let listingDate = moment(data.winnersListingDate).tz('Etc/UTC');
 
-    return `📢 <b>${airdropData.title}, ${airdropData.shortDescription}</b>
+    return `📢 <b>${data.title}, ${data.shortDescription}</b>
     
-🎉 Reward: <b>$${airdropData.tokenAmount} ${airdropData.tokenName}</b> <i>Per Winner</i>
-⭐️ Total Winner: ${airdropData.winnersCount}
-💰 Wallet: ${airdropData.requirements[0]} (${airdropData.protocol.toUpperCase()})
+🎉 Reward: <b>$${data.tokenAmount} ${data.tokenName}</b> <i>Per Winner</i>
+⭐️ Total Winner: ${data.winnersCount}
+💰 Wallet: ${data.requirements[0]} (${data.protocol.toUpperCase()})
 
-${airdropData.aboutTitle}
-${airdropData.aboutText}
+${data.aboutTitle}
+${data.aboutText}
 
 Save the Date: 
 📆 Start: ${startDate.format('LLL')} UTC
