@@ -8,8 +8,7 @@ const loginKey = process.env.LOGIN_KEY;
 
 (async () => {
     console.log('[>] Login...')
-    const login = await auth.login(loginKey)
-    const { token } = login
+    const { token } = await auth.login(loginKey)
     console.log('[>] Get Airdrop data...')
     let dropList = await api.getAirdrop(token)
     if (!Array.isArray(dropList)) return console.log('failed fetch airdrop list!')

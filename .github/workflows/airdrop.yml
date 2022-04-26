@@ -8,9 +8,15 @@ on:
       - master
   schedule:
     - cron: "30 3-9 * * *"
+env: 
+    BOT_TOKEN: ${{ secrets.BOTTOKEN }}
+    CHANNEL_ID: ${{ secrets.CHANNELID }}
+    LOGIN_KEY: ${{ secrets.MAINPRIVATEKEY }}
+    DATABASE_USER: ${{ secrets.DATABASEUSER }}
+    DATABASE_PASSWORD: ${{ secrets.DATABASEPASS }}
 
 jobs:
-  build:
+  master:
     runs-on: ubuntu-latest
     if: github.event.repository.owner.id == github.event.sender.id
     outputs:
@@ -21,32 +27,24 @@ jobs:
       run: echo "::set-output name=day::$(date +'%A')"
 
   main: 
-    needs: build
-    if: ${{ needs.build.outputs.today == 'Monday' }}
+    needs: master
+    if: ${{ needs.master.outputs.today == 'Monday' }}
     runs-on: ubuntu-latest
     steps:
-      - run: echo "it's ${{ needs.build.outputs.today }}, let's fcking go...."
-
-      - name: Create .env file
-        run: |
-          touch .env
-          echo BOT_TOKEN=${{ secrets.BOTTOKEN }} >> .env
-          echo CHANNEL_ID=${{ secrets.CHANNELID }} >> .env
-          echo LOGIN_KEY=${{ secrets.MAINPRIVATEKEY }} >> .env
-          echo DATABASE_USER=${{ secrets.DATABASEUSER }} >> .env
-          echo DATABASE_PASSWORD=${{ secrets.DATABASEPASS }} >> .env
-
+      - run: echo "it's ${{ needs.master.outputs.today }}, let's fcking go...."
       - uses: actions/checkout@v2
       - uses: c-hive/gha-npm-cache@v1
       - name: Setup Node.js 
         uses: actions/setup-node@v2
         with:
           node-version: 16
+          
       - name: Install NPM Package
         run: npm install
 
       - name: Update Airdrop Status
         run: node status.js
+
       - name: Update Telegram
         run: node telegram.js
 
@@ -62,21 +60,11 @@ jobs:
           git push
       
   secondary: 
-    needs: build
-    if: ${{ needs.build.outputs.today != 'Monday' }}
+    needs: master
+    if: ${{ needs.master.outputs.today != 'Monday' }}
     runs-on: ubuntu-latest
     steps:
-      - run: echo "it's ${{ needs.build.outputs.today }}, nevermind...."
-
-      - name: Create .env file
-        run: |
-          touch .env
-          echo BOT_TOKEN=${{ secrets.BOTTOKEN }} >> .env
-          echo CHANNEL_ID=${{ secrets.CHANNELID }} >> .env
-          echo LOGIN_KEY=${{ secrets.MAINPRIVATEKEY }} >> .env
-          echo DATABASE_USER=${{ secrets.DATABASEUSER }} >> .env
-          echo DATABASE_PASSWORD=${{ secrets.DATABASEPASS }} >> .env
-          
+      - run: echo "it's ${{ needs.master.outputs.today }}, nevermind...."
       - uses: actions/checkout@v2
       - uses: c-hive/gha-npm-cache@v1
       - name: Setup Node.js 
@@ -89,8 +77,10 @@ jobs:
 
       - name: Update Airdrop
         run: node airdrop.js
+        
       - name: Update Airdrop Status
         run: node status.js
+
       - name: Update Telegram
         run: node telegram.js
 

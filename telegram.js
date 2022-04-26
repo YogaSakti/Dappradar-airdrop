@@ -9,8 +9,7 @@ const loginKey = process.env.LOGIN_KEY;
 
 (async () => {
     console.log('[>] Login...')
-    const login = await auth.login(loginKey)
-    const { token } = login
+    const { token } = await auth.login(loginKey)
     const dropStatus = await db.Status.find()
     for (let i = 0; i < dropStatus.length; i++) {
         const drop = dropStatus[i];
