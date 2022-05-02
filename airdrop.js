@@ -20,6 +20,7 @@ const loginKey = process.env.LOGIN_KEY;
     if (dropNotExists.length >= 1) {
         for (let i = 0; i < dropNotExists.length; i++) {
             const drop = dropNotExists[i];
+            drop._id = drop.id
             console.log(`[NEW - ${drop.id}] ${drop.title} | $${drop.tokenAmount} ${drop.tokenName} For ${drop.winnersCount} Winner`)
             await db.Airdrop.create(drop).then((data) => console.log(`Sucess Add: ${data._id}`)).catch((err) => console.error(err));
         }
