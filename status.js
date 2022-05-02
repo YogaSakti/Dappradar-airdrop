@@ -94,6 +94,6 @@ const loginKey = process.env.LOGIN_KEY;
             
     //     }
     // } 
-    await delay(500)
+    await delay(1000)
     db.disc()
 })()
