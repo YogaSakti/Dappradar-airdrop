@@ -1,5 +1,4 @@
 /* eslint-disable max-params */
-const rfetch = require('node-fetch-retry');
 const fetch = require('node-fetch');
 
 let defaultOptions = (method, auth = null, data = null) => ({
