@@ -11,11 +11,11 @@ const loginKey = process.env.LOGIN_KEY;
     console.log('[>] Login...')
     const { token } = await auth.login(loginKey)
     const dropStatus = await db.Status.find()
-    const filteredDrops = dropStatus.filter((f) => !f.noUpdateTelegram)
+    const filteredDrops = dropStatus.filter((f) => f.noUpdateTelegram == false)
+    if (filteredDrops.length == 0) return console.log('There is No Update!');
     for (let i = 0; i < filteredDrops.length; i++) {
         const drop = filteredDrops[i];
         const dropData = await db.Airdrop.findById(drop.id)
-
         // get unposted drop and post it
         if (!drop.posted && drop.started) {
             // wait till start before post
@@ -42,7 +42,7 @@ const loginKey = process.env.LOGIN_KEY;
         // get posted drop and update it
         if (drop.posted && drop.started) {
             if (!drop.ended) {
-                        // update total partisipan
+                // update total partisipan
                 let dropParticipants = await api.getTotalAirdropParticipants(token, dropData.id)
                 let eventStatus = drop.started ? drop.ended ? drop.winnerPicked ? 'Event has ended, check winners list' : 'Event has ended, picking winner...' : 'Join now!' : 'Be patient, event not yet started!'
                 const inlineData = {
