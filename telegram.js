@@ -28,7 +28,7 @@ const loginKey = process.env.LOGIN_KEY;
                 totalParticipants: dropParticipants
             }
                     
-            telegram.sendPost(dropData.featuredImgUrl, generatedCaption, inlineData)
+            await telegram.sendPost(dropData.featuredImgUrl, generatedCaption, inlineData)
                     .then((result) => {
                         result.ok ? console.log(`[POST] ${dropData.id}. ${dropData.title} | $${dropData.tokenAmount} ${dropData.tokenName} For ${dropData.winnersCount} Winner | ${eventStatus} | Participants: ${dropParticipants}`) : console.log(result.description);
                         
@@ -50,8 +50,8 @@ const loginKey = process.env.LOGIN_KEY;
                     status: eventStatus,
                     totalParticipants: dropParticipants
                 }
-                telegram.updatePost(drop.msgId, inlineData)
-                                .then((result) => result.ok ? console.log(`[UPDATE] ${drop.id}. ${dropData.title} | $${dropData.tokenAmount} ${dropData.tokenName} For ${drop.winnersCount} Winner | ${eventStatus} | Participants: ${dropParticipants}`) : console.log(result.description))
+                await telegram.updatePost(drop.msgId, inlineData)
+                                .then((result) => result.ok ? console.log(`[UPDATE] ${drop.id}. ${dropData.title} | $${dropData.tokenAmount} ${dropData.tokenName} For ${dropData.winnersCount} Winner | ${eventStatus} | Participants: ${dropParticipants}`) : console.log(result.description))
                                 .catch((err) => console.error(err));
             } else {
                 if (drop.noUpdateStatus) { // if No further update
