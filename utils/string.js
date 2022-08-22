@@ -14,7 +14,7 @@ const caption = (data) => {
 
     return `📢 <b>${data.title}, ${data.shortDescription}</b>
     
-🎉 Reward: <b>$${data.tokenAmount} ${data.tokenName}</b> <i>Per Winner</i>
+🎉 Reward: <b>${data.tokenAmount} ${data.tokenName}</b> <i>Per Winner</i>
 ⭐️ Total Winner: ${data.winnersCount}
 💰 Wallet: ${data.requirements[0]} (${data.protocol.toUpperCase()})
 
