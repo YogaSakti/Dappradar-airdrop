@@ -43,6 +43,9 @@ jobs:
       - name: Install NPM Package
         run: npm install
 
+      - name: Update Airdrop Data
+        run: node airdrop.js
+
       - name: Update Airdrop Status
         run: node status.js
 
@@ -77,7 +80,7 @@ jobs:
       - name: Install NPM Package
         run: npm install
 
-      - name: Update Airdrop
+      - name: Update Airdrop Data
         run: node airdrop.js
         
       - name: Update Airdrop Status
