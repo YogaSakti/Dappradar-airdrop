@@ -11,9 +11,10 @@
 *
 */
 const { isJsonString } = require('../utils/string');
+const path = require('path');
 const { CurlGenerator } = require('curl-generator')
 const shell = require('shelljs');
-const baseProgram = '/home/garuda/dappradar/curl_impersonate -sS'
+const baseProgram = `${process.cwd()}/curl/curl_impersonate -sS`
 
 const createCurlCommand = (url, method, authorization, body) => {
     const params = {
@@ -57,7 +58,6 @@ const getAirdrop = (authorization) => {
     if (isJsonString(request)) {
         response = JSON.parse(request)
     } 
-    console.log(response.results);
 
     return response.results
 }

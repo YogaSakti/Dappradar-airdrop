@@ -39,6 +39,12 @@ jobs:
         with:
           node-version: 16
           cache: 'npm'
+
+      - name: Install curl dependencies
+        run: apt install libnss3 nss-plugin-pem ca-certificates -y
+
+      - name: add premission to curl
+        run: chmod 755 curl/curl_impersonate && chmod 755 curl/curl-impersonate-chrome
           
       - name: Install NPM Package
         run: npm install
@@ -76,6 +82,12 @@ jobs:
         with:
           node-version: 16
           cache: 'npm'
+          
+      - name: Install curl dependencies
+        run: apt install libnss3 nss-plugin-pem ca-certificates -y
+
+      - name: add premission to curl
+        run: chmod 755 curl/curl_impersonate && chmod 755 curl/curl-impersonate-chrome
 
       - name: Install NPM Package
         run: npm install
