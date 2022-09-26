@@ -9,9 +9,9 @@ const channelID = process.env.CHANNEL_ID;
 const sendPost = (bannerUrl, caption, data) => new Promise((resolve, reject) => {
     const body = new FormData()
     const inline = [[{ 'text': data.status, 'url': `https://dappradar.com/hub/airdrops/${data.id}` }]]
-    if (data.hasOwnProperty('totalParticipants')) {
-        inline.push([{ 'text': `Total Participant: ${data.totalParticipants}`, 'url': `https://dappradar.com/hub/airdrops/${data.id}` }])
-    }
+    // if (data.hasOwnProperty('totalParticipants')) {
+    //     inline.push([{ 'text': `Total Participant: ${data.totalParticipants}`, 'url': `https://dappradar.com/hub/airdrops/${data.id}` }])
+    // }
     body.append('photo', bannerUrl);
     body.append('caption', caption);
     body.append('reply_markup', JSON.stringify({
@@ -27,9 +27,9 @@ const sendPost = (bannerUrl, caption, data) => new Promise((resolve, reject) => 
 const updatePost = (msgId, data) => new Promise((resolve, reject) => {
     const body = new FormData()
     const inline = [[{ 'text': data.status, 'url': `https://dappradar.com/hub/airdrops/${data.id}` }]]
-    if (data.hasOwnProperty('totalParticipants')) {
-        inline.push([{ 'text': `Total Participant: ${data.totalParticipants}`, 'url': `https://dappradar.com/hub/airdrops/${data.id}` }])
-    }
+    // if (data.hasOwnProperty('totalParticipants')) {
+    //     inline.push([{ 'text': `Total Participant: ${data.totalParticipants}`, 'url': `https://dappradar.com/hub/airdrops/${data.id}` }])
+    // }
     body.append('reply_markup', JSON.stringify({
         'inline_keyboard': inline
     }));

@@ -24,8 +24,7 @@ const loginKey = process.env.LOGIN_KEY;
             let eventStatus = drop.started ? drop.ended ? drop.winnerPicked ? 'Event has ended, check winners list' : 'Event has ended, picking winner...' : 'Join now!' : 'Be patient, event not yet started!'
             const inlineData = {
                 id: drop.id,
-                status: eventStatus,
-                totalParticipants: dropParticipants
+                status: eventStatus
             }
                     
             await telegram.sendPost(dropData.featuredImgUrl, generatedCaption, inlineData)
@@ -47,8 +46,7 @@ const loginKey = process.env.LOGIN_KEY;
                 let eventStatus = drop.started ? drop.ended ? drop.winnerPicked ? 'Event has ended, check winners list' : 'Event has ended, picking winner...' : 'Join now!' : 'Be patient, event not yet started!'
                 const inlineData = {
                     id: drop.id,
-                    status: eventStatus,
-                    totalParticipants: dropParticipants
+                    status: eventStatus
                 }
                 await telegram.updatePost(drop.msgId, inlineData)
                                 .then((result) => result.ok ? console.log(`[UPDATE] ${drop.id}. ${dropData.title} | $${dropData.tokenAmount} ${dropData.tokenName} For ${dropData.winnersCount} Winner | ${eventStatus} | Participants: ${dropParticipants}`) : console.log(result.description))
