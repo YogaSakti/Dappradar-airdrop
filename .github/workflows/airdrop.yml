@@ -84,10 +84,10 @@ jobs:
           cache: 'npm'
           
       - name: Install curl dependencies
-        run: apt install libnss3 nss-plugin-pem ca-certificates -y
+        run: sudo apt-get install -y libnss3 nss-plugin-pem ca-certificates 
 
       - name: add premission to curl
-        run: chmod 755 curl/curl_impersonate && chmod 755 curl/curl-impersonate-chrome
+        run: sudo chmod 755 $GITHUB_WORKSPACE/curl/curl_impersonate && sudo chmod 755 $GITHUB_WORKSPACE/curl/curl-impersonate-chrome
 
       - name: Install NPM Package
         run: npm install
