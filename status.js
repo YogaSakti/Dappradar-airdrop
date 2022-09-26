@@ -20,7 +20,7 @@ const loginKey = process.env.LOGIN_KEY;
     if (statusNotExist.length >= 1) {
         for (let i = 0; i < statusNotExist.length; i++) {
             const drop = statusNotExist[i];
-            console.log(`Add Status: ${drop._id}`)
+            console.log(`Add Status: ${drop.id}`)
             await db.Status.create({
                 _id: drop.id,
                 id: drop.id,
