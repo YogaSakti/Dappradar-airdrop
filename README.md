@@ -3,8 +3,7 @@
 [![Bot Updater](https://github.com/YogaSakti/Dappradar-airdrop/actions/workflows/airdrop.yml/badge.svg?branch=master)](https://github.com/YogaSakti/Dappradar-airdrop/actions/workflows/airdrop.yml) 
 
 
-A telegram bot that will notify if there is a new event on [dappradar airdrop](https://dappradar.com/hub/airdrops) (Cloudflare Bypassed)
-
+A telegram bot that will notify if there is a new event on [dappradar airdrop](https://dappradar.com/hub/airdrops)
 
 ## want to run it yourself?
 Clone this project
