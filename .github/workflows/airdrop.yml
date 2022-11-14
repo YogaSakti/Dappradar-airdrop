@@ -7,7 +7,7 @@ on:
     branches:
       - master
   schedule:
-    - cron: "30 3-9 * * *"
+    - cron: "30 3-10 * * *"
 env: 
     BOT_TOKEN: ${{ secrets.BOTTOKEN }}
     CHANNEL_ID: ${{ secrets.CHANNELID }}
