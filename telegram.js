@@ -26,18 +26,18 @@ const loginKey = process.env.LOGIN_KEY;
                 id: drop.id,
                 status: eventStatus
             }
-                    
+
             await telegram.sendPost(dropData.featuredImgUrl, generatedCaption, inlineData)
-                    .then((result) => {
-                        result.ok ? console.log(`[POST] ${dropData.id}. ${dropData.title} | $${dropData.tokenAmount} ${dropData.tokenName} For ${dropData.winnersCount} Winner | ${eventStatus} | Participants: ${dropParticipants}`) : console.log(result.description);
-                        
-                        // update post status and msgid here
-                        return db.Status.findByIdAndUpdate(drop.id, { posted: true, msgId: result.result.message_id }, { new: true })
-                    })
-                    .then((data) => console.log(`Sucess Update DB: ${data.id} Posted`))
-                    .catch((err) => console.error(err));
-        }   
-            
+                .then((result) => {
+                    result.ok ? console.log(`[POST] ${dropData.id}. ${dropData.title} | $${dropData.tokenAmount} ${dropData.tokenName} For ${dropData.winnersCount} Winner | ${eventStatus} | Participants: ${dropParticipants}`) : console.log(result.description);
+
+                    // update post status and msgid here
+                    return db.Status.findByIdAndUpdate(drop.id, { posted: true, msgId: result.result.message_id }, { new: true })
+                })
+                .then((data) => console.log(`Sucess Update DB: ${data.id} Posted`))
+                .catch((err) => console.error(err));
+        }
+
         // get posted drop and update it
         if (drop.posted && drop.started) {
             if (!drop.ended) {
@@ -48,9 +48,10 @@ const loginKey = process.env.LOGIN_KEY;
                     id: drop.id,
                     status: eventStatus
                 }
+                
                 await telegram.updatePost(drop.msgId, inlineData)
-                                .then((result) => result.ok ? console.log(`[UPDATE] ${drop.id}. ${dropData.title} | $${dropData.tokenAmount} ${dropData.tokenName} For ${dropData.winnersCount} Winner | ${eventStatus} | Participants: ${dropParticipants}`) : console.log(result.description))
-                                .catch((err) => console.error(err));
+                    .then((result) => result.ok ? console.log(`[UPDATE] ${drop.id}. ${dropData.title} | $${dropData.tokenAmount} ${dropData.tokenName} For ${dropData.winnersCount} Winner | ${eventStatus} | Participants: ${dropParticipants}`) : console.log(result.description))
+                    .catch((err) => console.error(err));
             } else {
                 if (drop.noUpdateStatus) { // if No further update
                     let eventStatus = drop.started ? drop.ended ? drop.winnerPicked ? 'Event has ended, check winners list' : 'Event has ended, picking winner...' : 'Join now!' : 'Be patient, event not yet started!'
@@ -58,19 +59,17 @@ const loginKey = process.env.LOGIN_KEY;
                         id: drop.id,
                         status: eventStatus
                     }
-                                
-                    await telegram.updatePost(drop.msgId, inlineData)
-                                    .then((result) => result.ok ? console.log(`[Last] ${drop.id}. ${dropData.title} | $${dropData.tokenAmount} ${dropData.tokenName} For ${drop.winnersCount} Winner | ${eventStatus}`) : console.log(result.description))
-                                    .catch((err) => console.error(err));
-            
-                    await db.Status.findByIdAndUpdate(drop.id, {
-                        noUpdateTelegram: true 
-                    }, { new: true })
-                }
 
+                    await telegram.updatePost(drop.msgId, inlineData)
+                        .then((result) => {
+                            result.ok ? console.log(`[Last] ${drop.id}. ${dropData.title} | $${dropData.tokenAmount} ${dropData.tokenName} For ${drop.winnersCount} Winner | ${eventStatus}`) : console.log(result.description)
+
+                            return db.Status.findByIdAndUpdate(drop.id, { noUpdateTelegram: true }, { new: true })
+                        })
+                        .catch((err) => console.error(err));
+                }
             }
         }
-        
     }
     await delay(1000)
     db.disc()

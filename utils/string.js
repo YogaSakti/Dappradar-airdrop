@@ -23,8 +23,7 @@ ${data.aboutText}
 
 Save the Date: 
 📆 Start: ${startDate.format('LLL')} UTC
-📆 End: ${endDate.format('LLL')} UTC
-📄 Listing: ${listingDate.format('LLL')} UTC
+📆 End  : ${endDate.format('LLL')} UTC
 ` 
 };
 
