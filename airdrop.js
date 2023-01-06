@@ -3,9 +3,9 @@ const api = require('./module/api');
 const auth = require('./module/auth');
 const db = require('./module/database');
 const delay = require('delay');
-const loginKey = process.env.LOGIN_KEY;
 const { client: mqttClient, topic } = require('./module/mqtt');
 
+const loginKey = process.env.LOGIN_KEY;
 
 (async () => {
     console.log('[>] Login...')
@@ -16,6 +16,8 @@ const { client: mqttClient, topic } = require('./module/mqtt');
     dropList = dropList.sort((a, b) => a.id - b.id)
     const airdrops = await db.Airdrop.find({})
 
+    let mqttData
+
     console.log('[>] Processing New data...')
     const dropNotExists = [...dropList.filter((y) => !airdrops.some((x) => x.id == y.id))]
     if (dropNotExists.length >= 1) {
@@ -25,11 +27,9 @@ const { client: mqttClient, topic } = require('./module/mqtt');
             console.log(`[NEW - ${drop.id}] ${drop.title} | $${drop.tokenAmount} ${drop.tokenName} For ${drop.winnersCount} Winner`)
             await db.Airdrop.create(drop).then((data) => console.log(`Sucess Add: ${data._id}`)).catch((err) => console.error(err));
         
-            // send mqtt notification
-            let mqttData = drop
+            // create mqtt data
+            mqttData = drop
             mqttData.command = '#airdrop'
-            mqttClient.publish(topic, mqttData)
-            mqttClient.end({ force: true })
         }
     }
 
@@ -58,6 +58,13 @@ const { client: mqttClient, topic } = require('./module/mqtt');
     //     } 
     // } 
     
+    if (mqttData && mqttClient.connected) {
+        console.log('[>] Sending MQTT data...')
+        mqttClient.publish(topic, JSON.stringify(mqttData))
+    }
+    
+    console.log('[>] Disconnecting...')
     await delay(1000)
+    mqttClient.end({ force: true })
     db.disc()
 })()
