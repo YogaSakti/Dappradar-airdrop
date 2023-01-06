@@ -14,6 +14,7 @@ env:
     LOGIN_KEY: ${{ secrets.MAINPRIVATEKEY }}
     DATABASE_USER: ${{ secrets.DATABASEUSER }}
     DATABASE_PASSWORD: ${{ secrets.DATABASEPASS }}
+    MQTT_TOPIC: ${{ secrets.MQTT_TOPIC }}
 
 jobs:
   master:

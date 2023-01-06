@@ -4,6 +4,7 @@ const auth = require('./module/auth');
 const db = require('./module/database');
 const delay = require('delay');
 const loginKey = process.env.LOGIN_KEY;
+const { client: mqttClient, topic } = require('./module/mqtt');
 
 
 (async () => {
@@ -23,6 +24,11 @@ const loginKey = process.env.LOGIN_KEY;
             drop._id = drop.id
             console.log(`[NEW - ${drop.id}] ${drop.title} | $${drop.tokenAmount} ${drop.tokenName} For ${drop.winnersCount} Winner`)
             await db.Airdrop.create(drop).then((data) => console.log(`Sucess Add: ${data._id}`)).catch((err) => console.error(err));
+        
+            // send mqtt notification
+            let mqttData = drop
+            mqttData.command = '#airdrop'
+            mqttClient.publish(topic, mqttData)
         }
     }
 

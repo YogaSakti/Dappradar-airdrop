@@ -11,10 +11,9 @@
 *
 */
 const { isJsonString } = require('../utils/string');
-const path = require('path');
-const { CurlGenerator } = require('curl-generator')
+const { CurlGenerator } = require('curl-generator');
 const shell = require('shelljs');
-const baseProgram = `${process.cwd()}/curl/curl_impersonate -sS`
+const baseProgram = `${process.cwd()}/curl/curl_impersonate -sS`;
 
 const createCurlCommand = (url, method, authorization, body) => {
     const params = {
