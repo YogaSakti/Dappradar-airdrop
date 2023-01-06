@@ -29,6 +29,7 @@ const { client: mqttClient, topic } = require('./module/mqtt');
             let mqttData = drop
             mqttData.command = '#airdrop'
             mqttClient.publish(topic, mqttData)
+            mqttClient.end({ force: true })
         }
     }
 
